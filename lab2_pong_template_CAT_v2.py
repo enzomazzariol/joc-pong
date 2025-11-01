@@ -26,7 +26,7 @@ Control anti copiar/enganxar amb IA:
 """
 
 import sys      # Utilitzat només per a sys.exit(0): garanteix una terminació neta del programa a tots els SO
-import pygame   # essencial per a tot el renderitzat i el joc
+import pygame  # essencial per a tot el renderitzat i el joc
 import random   # útil per aleatoritzar lleugerament coses (p. ex., direcció inicial de la pilota)
 
 # ==============
@@ -107,9 +107,17 @@ def get_config() -> tuple[int, int, int, int, int]:
     #--> POR HACER: if paddle_height.lower() == "sí" or paddle_height.lower() == "si" : #He buscat com omptimiztar aquesta línea per si l'usuari respon si de diferents maneres. Convertint l'input a mínuscules s'estalvia molts paddle_height == "Sí" or ...
         
 
+    res_usuario = input("Quieres cambiar la configuración del juego?")
+    cambiar_config = ask_si_no(res_usuario)
 
-        
-        
+    if cambiar_config:
+        paddle_height = read_int_in_range("Introdueix l'alçada de la pala (60-160 píxels): ", 60, 160)
+        speed_paddle = read_int_in_range("Introdueix la velocitat de la pala (3-15 píxels per fotograma): ", 3, 15)
+        speed_ball_x = read_int_in_range("Introdueix la velocitat X de la pilota (3-15 píxels per fotograma): ", 3, 12)
+        speed_ball_y = read_int_in_range("Introdueix la velocitat Y de la pilota (3-15 píxels per fotograma): ", 3, 12)
+        ball_radius = read_int_in_range("Introdueix el radi de la pilota (5-20 píxels): ", 5, 20)
+
+        return paddle_height, speed_paddle, speed_ball_x, speed_ball_y, ball_radius    
 
     # Aquesta línia s'ha deixat perquè el programa complet funcioni
     # Correspon a l'usuari responent NO a canviar cap valor per defecte
@@ -149,6 +157,14 @@ def change_colors() -> tuple[tuple[int, int, int], tuple[int, int, int]]:
 
     # TODO: posa el teu codi!!!
 
+    res_usuario = input("Vols canviar els colors del joc? ")
+    cambiar_colores = ask_si_no(res_usuario)
+
+    if cambiar_colores:
+        backg_col = read_color("Introdueix el color de fons")
+        foreg_col = read_color("Introdueix el color de primer pla")
+        return backg_col, foreg_col
+
     # Aquesta línia s'ha deixat perquè el programa complet funcioni
     # L'hauràs d'eliminar quan afegeixis el teu codi
     return BLACK, WHITE
@@ -184,6 +200,12 @@ def read_color(prompt: str) -> tuple[int, int, int]:
 
     # TODO: posa el teu codi!!!
 
+    print(f"Introdueix els components RGB per al color de {prompt}:")
+    r = read_int_in_range("Component Vermell (0-255)", 0, 255)
+    g = read_int_in_range("Component Verd (0-255)", 0, 255)
+    b = read_int_in_range("Component Blau (0-255)", 0, 255)
+    return (r, g, b)
+
 
 def read_int_in_range(prompt: str, low: int, high: int) -> int:
     """Demana a l'usuari un enter dins de [low, high]. 
@@ -207,6 +229,16 @@ def read_int_in_range(prompt: str, low: int, high: int) -> int:
     """
     
     # TODO: posa el teu codi!!!
+    print(f"{prompt}: ")
+    while True:
+        try:
+            value = int(input())
+            if low <= value <= high:
+                return value
+            else:
+                print(f"Error: Si us plau, introdueix un enter entre {low} i {high}.")
+        except ValueError:
+            print("Error: Entrada invàlida. Si us plau, introdueix un nombre enter.")
 
 
     
@@ -274,6 +306,14 @@ def ask_si_no(prompt: str) -> bool:
     - Només retorna després de rebre una entrada vàlida; no aturis el programa amb errors.
     """
     # TODO: posa el teu codi!!!
+
+    if(str(prompt).lower() == "sí" or str(prompt).lower() == "si" or str(prompt).lower() == "s"):
+        return True
+    elif(str(prompt).lower() == "no" or str(prompt).lower() == "n"):
+        return False
+    else:
+        print("Responde sí/s o no/n, por favor.")
+        return ask_si_no(input("¿Quieres cambiar la configuración del juego? "))
 
 
 # ================================
@@ -461,7 +501,7 @@ def collide_ball_paddle(x: int, y: int, vx: int, vy: int,
             x = right_paddle + radius
         else:
             x = left_paddle - radius
-    return x, y, vx, vy, hit
+    return vx, vy, hit
 
     # Aquesta línia s'ha deixat perquè el programa complet funcioni
     # L'hauràs d'eliminar quan afegeixis el teu codi
