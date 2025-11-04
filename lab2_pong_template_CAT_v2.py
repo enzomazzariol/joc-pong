@@ -62,7 +62,7 @@ KEY_UP_RIGHT = pygame.K_UP          # fletxa AMUNT
 KEY_DOWN_RIGHT = pygame.K_DOWN      # fletxa AVALL
 
 # Indicador per jugar contra la màquina
-play_against_machine = False    # False per defecte
+play_against_machine = True    # False per defecte
 # Crea una funció perquè l'usuari la pugui canviar opcionalment, si implementes el mode de "màquina intel·ligent"
 
 # ==============================================================================
@@ -103,18 +103,16 @@ def get_config() -> tuple[int, int, int, int, int]:
     """
     # TODO: posa el teu codi!!!
 
-    #--> POR HACER: paddle_height = str(input("Vols canviar l'alçada de la pala? (Sí/No): "))
-    #--> POR HACER: if paddle_height.lower() == "sí" or paddle_height.lower() == "si" : #He buscat com omptimiztar aquesta línea per si l'usuari respon si de diferents maneres. Convertint l'input a mínuscules s'estalvia molts paddle_height == "Sí" or ...
-        
-
-    res_usuario = input("Quieres cambiar la configuración del juego?")
+    res_usuario = input("Vols canviar la configuració del joc?: ")
+    # Es converteix la resposta en un valor booleà mitjançant la funció ask_si_no()
     cambiar_config = ask_si_no(res_usuario)
 
     if cambiar_config:
-        paddle_height = read_int_in_range("Introdueix l'alçada de la pala (60-160 píxels): ", 60, 160)
-        speed_paddle = read_int_in_range("Introdueix la velocitat de la pala (3-15 píxels per fotograma): ", 3, 15)
-        speed_ball_x = read_int_in_range("Introdueix la velocitat X de la pilota (3-15 píxels per fotograma): ", 3, 12)
-        speed_ball_y = read_int_in_range("Introdueix la velocitat Y de la pilota (3-15 píxels per fotograma): ", 3, 12)
+        # Es demana cada valor de configuració amb el seu rang corresponent
+        paddle_height = read_int_in_range("Introdueix l'alçada de la pala (60-160 píxels) ", 60, 160)
+        speed_paddle = read_int_in_range("Introdueix la velocitat de la pala (3-15 píxels per fotograma) ", 3, 15)
+        speed_ball_x = read_int_in_range("Introdueix la velocitat X de la pilota (3-12 píxels per fotograma) ", 3, 12)
+        speed_ball_y = read_int_in_range("Introdueix la velocitat Y de la pilota (3-12 píxels per fotograma) ", 3, 12)
         ball_radius = read_int_in_range("Introdueix el radi de la pilota (5-20 píxels): ", 5, 20)
 
         return paddle_height, speed_paddle, speed_ball_x, speed_ball_y, ball_radius    
@@ -158,11 +156,14 @@ def change_colors() -> tuple[tuple[int, int, int], tuple[int, int, int]]:
     # TODO: posa el teu codi!!!
 
     res_usuario = input("Vols canviar els colors del joc? ")
+    # Es converteix la resposta en un valor booleà mitjançant la funció ask_si_no()
     cambiar_colores = ask_si_no(res_usuario)
 
     if cambiar_colores:
-        backg_col = read_color("Introdueix el color de fons")
-        foreg_col = read_color("Introdueix el color de primer pla")
+        # Es demana el color de fons mitjançant la funció read_color(),
+        # que recull els tres valors RGB de manera controlada
+        backg_col = read_color("fons")
+        foreg_col = read_color("primer pla")
         return backg_col, foreg_col
 
     # Aquesta línia s'ha deixat perquè el programa complet funcioni
@@ -201,6 +202,7 @@ def read_color(prompt: str) -> tuple[int, int, int]:
     # TODO: posa el teu codi!!!
 
     print(f"Introdueix els components RGB per al color de {prompt}:")
+    # Es llegeixen els tres components utilitzant la funció read_int_in_range()
     r = read_int_in_range("Component Vermell (0-255)", 0, 255)
     g = read_int_in_range("Component Verd (0-255)", 0, 255)
     b = read_int_in_range("Component Blau (0-255)", 0, 255)
@@ -233,6 +235,7 @@ def read_int_in_range(prompt: str, low: int, high: int) -> int:
     while True:
         try:
             value = int(input())
+            # Comprovem si el valor està dins del rang
             if low <= value <= high:
                 return value
             else:
@@ -307,13 +310,14 @@ def ask_si_no(prompt: str) -> bool:
     """
     # TODO: posa el teu codi!!!
 
+    # Es normalitza la resposta de l'usuari a minúscules per facilitar la comparació
     if(str(prompt).lower() == "sí" or str(prompt).lower() == "si" or str(prompt).lower() == "s"):
         return True
     elif(str(prompt).lower() == "no" or str(prompt).lower() == "n"):
         return False
     else:
-        print("Responde sí/s o no/n, por favor.")
-        return ask_si_no(input("¿Quieres cambiar la configuración del juego? "))
+        print("Respon sí/s o no/n, siusplau")
+        return ask_si_no(input("Vols canviar la configuració del joc?: "))
 
 
 # ================================
@@ -547,9 +551,9 @@ def reset_ball(center_x: int, center_y: int, vx0: int, vy0: int, to_right: bool)
     y = center_y
 
     if to_right:
-        vx = -vx0
-    else:
         vx = vx0
+    else:
+        vx = -vx0
     
     vy_simbol = random.randint(-1, 1)
 
@@ -557,7 +561,7 @@ def reset_ball(center_x: int, center_y: int, vx0: int, vy0: int, to_right: bool)
         vy_simbol = 1 or -1
 
     vy = vy0 * vy_simbol
-    4
+
 
     # Aquesta línia s'ha deixat perquè el programa complet funcioni
     # L'hauràs d'eliminar quan afegeixis el teu codi
@@ -594,7 +598,17 @@ def compute_ai_direction(ball_y: int, paddle_y: int, paddle_h: int) -> int:
     quan la pilota estigui prou alineada.
     """
     # TODO: posa el teu codi!!!
+    
+    center_paddle = paddle_y + paddle_h / 2
 
+    tolerance = 10
+
+    if ball_y < center_paddle - tolerance:  
+        return -1
+    elif ball_y > center_paddle + tolerance:
+        return 1
+    else:
+        return 0
 
 # =============================================
 # LECTURA DE TELES AMUNT/AVALL (donat als estudiants)
@@ -657,8 +671,14 @@ def show_message(screen: pygame.Surface,message: str,backg_col, foreg_col, show_
 # =================================
 
 def main() -> None:
+
+    global play_against_machine
+
     paddle_h, paddle_speed, speed_ball_x, speed_ball_y, ball_radius = get_config()
     backg_col, foreg_col = change_colors()
+
+    mode = input("Vols jugar contra l'ordinador? (s/n): ").strip().lower()
+    play_against_machine = ask_si_no(mode)
 
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
